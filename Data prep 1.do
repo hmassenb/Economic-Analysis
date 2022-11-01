@@ -70,6 +70,42 @@ replace closecanton = 0 if cantons_yes > 14
 
 * There are 31 cases where the cantons were close 
 
+reg bet closecanton 
+
+eststo clear
+foreach canton in $cantons_bet{
+eststo: reg `canton' closecanton 
+}
+
+esttab _all using closecanton.tex, replace
+
+* Transposing table so it is possible to look at all outcomes at once
+mat list r(coefs)
+mat rename r(coefs) Participation
+mat list Participation
+esttab matrix(Participation, transpose) using transposed_closecanton.tex, replace ///
+	se mtitle noobs nocons ///
+	posthead(Close call cantonal & &  \\hline ) 
+
+
+* Result = positive impact if the cantons who votes yes were a close call [12-14] on the participation in voting on a cantonal level 
+
+* Realised I forgot to check it how it would look like on a national level 
+reg bet closecanton // similarly positive as the others but sign only 10%
+
+twoway histogram bet if closecanton == 1 ||  kdensity bet , ylabel(0 "0%" 0.02 "20%"  0.04 "40%" 0.06 "60%") xtitle("Participation share") ytitle("Density of participation share ") title("Distribution of votes if canton close call")
+
+
+
+* If there was a close call on cantonal level under the circumstance that also on the national level it was a close call, then coefficient almost doubles AND becomes significant on a 5% level
+reg bet closecanton if diff10du == 1
+reg bet closecanton if diff5du == 1 // Even larger but again only sign on 10% can be also traced back to the smaller sample 
+reg bet closecanton if diff1du == 1 // Becomes 6 times larger but not even significant on the 10% level 
+
+twoway scatter bet abs_diff || lfit bet abs_diff
+
+
+
 
 
 

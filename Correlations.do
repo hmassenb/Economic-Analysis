@@ -12,7 +12,9 @@ global diff1_canton ///
  diff1_diff_noshare_zhjaproz diff1_diff_noshare_bejaproz diff1_diff_noshare_lujaproz diff1_diff_noshare_urjaproz diff1_diff_noshare_szjaproz diff1_diff_noshare_owjaproz diff1_diff_noshare_nwjaproz diff1_diff_noshare_gljaproz diff1_diff_noshare_zgjaproz diff1_diff_noshare_frjaproz diff1_diff_noshare_sojaproz diff1_diff_noshare_bsjaproz diff1_diff_noshare_bljaproz diff1_diff_noshare_shjaproz diff1_diff_noshare_arjaproz diff1_diff_noshare_sgjaproz diff1_diff_noshare_grjaproz diff1_diff_noshare_agjaproz diff1_diff_noshare_tgjaproz diff1_diff_noshare_vdjaproz diff1_diff_noshare_vsjaproz diff1_diff_noshare_nejaproz diff1_diff_noshare_gejaproz diff1_diff_noshare_jujaproz
 
 
-
+global diff10_canton ///
+ diff10_diff_noshare_zhjaproz diff10_diff_noshare_bejaproz diff10_diff_noshare_lujaproz diff10_diff_noshare_urjaproz diff10_diff_noshare_szjaproz diff10_diff_noshare_owjaproz diff10_diff_noshare_nwjaproz diff10_diff_noshare_gljaproz diff10_diff_noshare_zgjaproz diff10_diff_noshare_frjaproz diff10_diff_noshare_sojaproz diff10_diff_noshare_bsjaproz diff10_diff_noshare_bljaproz diff10_diff_noshare_shjaproz diff10_diff_noshare_arjaproz diff10_diff_noshare_sgjaproz diff10_diff_noshare_grjaproz diff10_diff_noshare_agjaproz diff10_diff_noshare_tgjaproz diff10_diff_noshare_vdjaproz diff10_diff_noshare_vsjaproz diff10_diff_noshare_nejaproz diff10_diff_noshare_gejaproz diff10_diff_noshare_jujaproz
+ 
 ********************
 *** Correlations ***
 ********************
@@ -127,11 +129,25 @@ eststo: reg bet abs_diff
 eststo: reg bet diff10 
 eststo: reg bet diff5
 eststo: reg bet diff1
-esttab using all_reg_simple.tex
+esttab using all_reg_simple.tex, replace
 
+/*
 foreach canton in $cantons_bet{
 	reg `canton' diff1_`canton'
 }
+*/
+* This doesnt work as diff1_`canton' has partially no data
+
+**************!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!**********
+** Need some work on those regressions since the table doesnt deliever a nice result !!!**
+
+foreach canton in $cantons_bet{
+eststo: reg `canton' diff10
+}
+
+esttab using canton_bet_diff.tex, replace ///
+beta
+
 
 /*
 * Dummies require probit
@@ -142,10 +158,30 @@ probit  diff10du bet
 */
 
 * i. to splitter variable up to obtain heterogenous effects
-reg bet diff i.d1e1
-* -> topic two has the strongest impact
 
-reg bet diff i.anzahl
+eststo clear
+eststo: reg bet diff diff10du i.d1e1
+esttab  using reg_bet_topic.tex, replace ///
+	cells(b(star fmt(3)) se(par fmt(3))) star(* 0.1 ** 0.05 *** 0.01) ///
+	nolines  ///
+	collabels(none) ///
+	stats(N r2, fmt(%9.0fc %9.3f) ///
+	labels("N Households" "R$^{2}$")) ///
+	posthead(Diff and Topic  \\ \hline ) 
+	
+	
+* -> topic two has the strongest impact
+eststo clear
+eststo: reg bet diff diff10du i.anzahl 
+esttab  using reg_bet_anzahl.tex, replace ///
+	cells(b(star fmt(3)) se(par fmt(3))) star(* 0.1 ** 0.05 *** 0.01) ///
+	nolines  ///
+	collabels(none) ///
+	stats(N r2, fmt(%9.0fc %9.3f) ///
+	labels("N Households" "R$^{2}$")) ///
+	posthead(Diff and Amount  \\ \hline ) 
+* if there are more referendums people are more likely to participate
+
 
 /*
 twoway scatter $diff1_canton bet
