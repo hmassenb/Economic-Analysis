@@ -102,6 +102,15 @@ reg bet closecanton if diff10du == 1
 reg bet closecanton if diff5du == 1 // Even larger but again only sign on 10% can be also traced back to the smaller sample 
 reg bet closecanton if diff1du == 1 // Becomes 6 times larger but not even significant on the 10% level 
 
+
+* Now looking how the cantonal participation was affected by the closeness of cantons
+foreach canton in $cantons_bet{
+	eststo: reg `canton' closecanton
+}
+
+esttab _all using closecanton.tex, replace
+
+
 twoway scatter bet abs_diff || lfit bet abs_diff
 
 
