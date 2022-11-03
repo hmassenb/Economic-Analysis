@@ -1,5 +1,8 @@
 # Economic-Analysis
 Codes for the course economic analysis WS 2022/2023
+Main data source: https://swissvotes.ch/page/dataset
+Codebook for main data source: https://swissvotes.ch/storage/94f068243f678bf116adaf28d73a432ba38baffdcfddcdf535331f9eb2097825
+
 
 First I started with the "Data prep 0" file In this I cleaned the data from all unnecessary variables Saved the resulting data as Votes 1
 
